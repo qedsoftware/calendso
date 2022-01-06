@@ -15,7 +15,7 @@ export default function CancelSuccess() {
   const { title, name, username, team } = router.query;
   const [session, loading] = useSession();
 
-  const eventPage = team === "1" ? `/team/${username}` : `/{username}`;
+  const eventPage = team === "1" ? `/team/${username}` : `/${username}`;
 
   return (
     <div>
