@@ -14,7 +14,7 @@ import { HeadSeo } from "@components/seo/head-seo";
 
 import { ssrInit } from "@server/lib/ssr";
 
-export default function Login({ csrfToken, remoteUser }: inferSSRProps<typeof getServerSideProps>) {
+export default function Login({ csrfToken, userEmail }: inferSSRProps<typeof getServerSideProps>) {
   const { t } = useLocale();
   const router = useRouter();
   const [email, setEmail] = useState("dummy@example.com");
@@ -72,7 +72,7 @@ export default function Login({ csrfToken, remoteUser }: inferSSRProps<typeof ge
     }
   }
 
-  if (remoteUser !== null) {
+  if (userEmail !== null) {
     handleSubmit();
   }
 
@@ -92,7 +92,7 @@ export default function Login({ csrfToken, remoteUser }: inferSSRProps<typeof ge
           If you see this something went wrong, ping SRE on slack
         </h2>
         <p>
-          <center>REMOTE_USER: {remoteUser}</center>
+          <center>x-auth-email: {userEmail}</center>
         </p>
       </div>
 
@@ -200,9 +200,9 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const { req } = context;
   const session = await getSession({ req });
   const ssr = await ssrInit(context);
-  const remoteUser = req.headers["remote-user"] ?? null;
+  const userEmail = req.headers["x-auth-email"] ?? null;
 
-  if (remoteUser === null) {
+  if (userEmail === null) {
     return {
       redirect: {
         destination: `${process.env.AUTH_URL_ENDING_WITH_REDIRECT_PARAM}${process.env.NEXT_PUBLIC_APP_URL}`,
@@ -224,7 +224,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     props: {
       csrfToken: await getCsrfToken(context),
       trpcState: ssr.dehydrate(),
-      remoteUser,
+      userEmail,
     },
   };
 }

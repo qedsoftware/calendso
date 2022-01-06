@@ -27,13 +27,17 @@ export default NextAuth({
         totpCode: { label: "Two-factor Code", type: "input", placeholder: "Code from authenticator app" },
       },
       async authorize(credentials, req) {
-        const username = req.headers["remote-user"];
+        const userEmail = req.headers["x-auth-email"];
 
-        if (!username) {
+        if (!userEmail) {
           throw new Error(ErrorCode.UserNotFound);
         }
 
-        const userEmail = `${username}@example.com`;
+        const username = userEmail.split("@")[0];
+
+        console.log("LELE");
+        console.log(username);
+        console.log(userEmail);
 
         const hashedPassword = await hashPassword("does-not-matter-anyway");
 
