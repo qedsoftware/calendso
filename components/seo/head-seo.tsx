@@ -27,7 +27,7 @@ const buildSeoMeta = (pageProps: {
   url?: string;
   canonical?: string;
 }): NextSeoProps => {
-  const { title, description, image, canonical, siteName = seoConfig.headSeo.siteName } = pageProps;
+  const { title, description, canonical, siteName = seoConfig.headSeo.siteName } = pageProps;
   return {
     title: title,
     canonical: canonical,
@@ -36,6 +36,7 @@ const buildSeoMeta = (pageProps: {
       type: "website",
       title: title,
       description: description,
+      /* Contains cal.com branding.
       images: [
         {
           url: image,
@@ -44,6 +45,7 @@ const buildSeoMeta = (pageProps: {
           //alt: "Alt image"
         },
       ],
+      */
     },
     additionalMetaTags: [
       {
@@ -58,10 +60,12 @@ const buildSeoMeta = (pageProps: {
         name: "description",
         content: description,
       },
+      /* Contains cal.com branding
       {
         property: "image",
         content: image,
       },
+      */
     ],
   };
 };
@@ -88,7 +92,7 @@ export const HeadSeo: React.FC<HeadSeoProps & { children?: never }> = (props) =>
     nextSeoProps = {},
   } = props;
 
-  const pageTitle = title + " | Cal.com";
+  const pageTitle = title + " | QED.ai";
   let seoObject = buildSeoMeta({ title: pageTitle, image, description, canonical, siteName });
 
   if (name && avatar) {

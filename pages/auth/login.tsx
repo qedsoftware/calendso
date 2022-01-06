@@ -14,11 +14,11 @@ import { HeadSeo } from "@components/seo/head-seo";
 
 import { ssrInit } from "@server/lib/ssr";
 
-export default function Login({ csrfToken }: inferSSRProps<typeof getServerSideProps>) {
+export default function Login({ csrfToken, remoteUser }: inferSSRProps<typeof getServerSideProps>) {
   const { t } = useLocale();
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("dummy@example.com");
+  const [password] = useState("dummy");
   const [code, setCode] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [secondFactorRequired, setSecondFactorRequired] = useState(false);
@@ -33,9 +33,7 @@ export default function Login({ csrfToken }: inferSSRProps<typeof getServerSideP
 
   const callbackUrl = typeof router.query?.callbackUrl === "string" ? router.query.callbackUrl : "/";
 
-  async function handleSubmit(e: React.SyntheticEvent) {
-    e.preventDefault();
-
+  async function handleSubmit() {
     if (isSubmitting) {
       return;
     }
@@ -74,6 +72,10 @@ export default function Login({ csrfToken }: inferSSRProps<typeof getServerSideP
     }
   }
 
+  if (remoteUser !== null) {
+    handleSubmit();
+  }
+
   return (
     <div className="min-h-screen bg-neutral-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <HeadSeo title={t("login")} description={t("login")} />
@@ -87,8 +89,11 @@ export default function Login({ csrfToken }: inferSSRProps<typeof getServerSideP
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <img className="h-6 mx-auto" src="/calendso-logo-white-word.svg" alt="Cal.com Logo" />
         <h2 className="font-cal mt-6 text-center text-3xl font-bold text-neutral-900">
-          {t("sign_in_account")}
+          If you see this something went wrong, ping SRE on slack
         </h2>
+        <p>
+          <center>REMOTE_USER: {remoteUser}</center>
+        </p>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
@@ -130,6 +135,7 @@ export default function Login({ csrfToken }: inferSSRProps<typeof getServerSideP
                 </div>
               </div>
               <div className="mt-1">
+                {/* otherwise browser autocomplete gets triggered
                 <input
                   id="password"
                   name="password"
@@ -140,6 +146,7 @@ export default function Login({ csrfToken }: inferSSRProps<typeof getServerSideP
                   onInput={(e) => setPassword(e.currentTarget.value)}
                   className="appearance-none block w-full px-3 py-2 border border-neutral-300 rounded-sm shadow-sm placeholder-gray-400 focus:outline-none focus:ring-neutral-900 focus:border-neutral-900 sm:text-sm"
                 />
+                */}
               </div>
             </div>
 
@@ -193,6 +200,16 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const { req } = context;
   const session = await getSession({ req });
   const ssr = await ssrInit(context);
+  const remoteUser = req.headers["remote-user"] ?? null;
+
+  if (remoteUser === null) {
+    return {
+      redirect: {
+        destination: `${process.env.AUTH_URL_ENDING_WITH_REDIRECT_PARAM}${process.env.NEXT_PUBLIC_APP_URL}`,
+        permanent: false,
+      },
+    };
+  }
 
   if (session) {
     return {
@@ -207,6 +224,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     props: {
       csrfToken: await getCsrfToken(context),
       trpcState: ssr.dehydrate(),
+      remoteUser,
     },
   };
 }

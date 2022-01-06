@@ -16,13 +16,15 @@ export const seoConfig: {
   defaultNextSeo: DefaultSeoProps;
 } = {
   headSeo: {
-    siteName: "Cal.com",
+    siteName: "Scheduling @ QED.ai",
   },
   defaultNextSeo: {
+    /*
     twitter: {
       handle: "@calendso",
       site: "@Calendso",
       cardType: "summary_large_image",
     },
+    */
   },
 } as const;

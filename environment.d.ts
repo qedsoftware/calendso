@@ -26,5 +26,7 @@ declare namespace NodeJS {
     readonly PAYMENT_FEE_FIXED: number | undefined;
     readonly CALENDSO_ENCRYPTION_KEY: string | undefined;
     readonly NEXT_PUBLIC_INTERCOM_APP_ID: string | undefined;
+    readonly AVATAR_PROXY_URL: string | undefined;
+    readonly AUTH_URL_ENDING_WITH_REDIRECT_PARAM: string | undefined;
   }
 }

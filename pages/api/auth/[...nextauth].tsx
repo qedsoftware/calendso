@@ -2,7 +2,7 @@ import NextAuth from "next-auth";
 import Providers from "next-auth/providers";
 import { authenticator } from "otplib";
 
-import { ErrorCode, Session, verifyPassword } from "@lib/auth";
+import { ErrorCode, hashPassword, Session, verifyPassword } from "@lib/auth";
 import { symmetricDecrypt } from "@lib/crypto";
 import prisma from "@lib/prisma";
 
@@ -26,16 +26,47 @@ export default NextAuth({
         password: { label: "Password", type: "password", placeholder: "Your super secure password" },
         totpCode: { label: "Two-factor Code", type: "input", placeholder: "Code from authenticator app" },
       },
-      async authorize(credentials) {
-        const user = await prisma.user.findUnique({
-          where: {
-            email: credentials.email.toLowerCase(),
+      async authorize(credentials, req) {
+        const username = req.headers["remote-user"];
+
+        if (!username) {
+          throw new Error(ErrorCode.UserNotFound);
+        }
+
+        const userEmail = `${username}@example.com`;
+
+        const hashedPassword = await hashPassword("does-not-matter-anyway");
+
+        await prisma.user.upsert({
+          where: { email: userEmail },
+          update: {
+            username,
+            password: hashedPassword,
+            avatar: `${process.env.AVATAR_PROXY_URL}/${username}.jpg`,
+            hideBranding: true,
+          },
+          create: {
+            username,
+            email: userEmail,
+            password: hashedPassword,
+            avatar: `${process.env.AVATAR_PROXY_URL}/${username}.jpg`,
+            emailVerified: new Date(Date.now()),
+            hideBranding: true,
           },
         });
 
-        if (!user) {
-          throw new Error(ErrorCode.UserNotFound);
-        }
+        const user = await prisma.user.findUnique({
+          where: {
+            email: userEmail,
+          },
+        });
+
+        return {
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          name: user.name,
+        };
 
         if (!user.password) {
           throw new Error(ErrorCode.UserMissingPassword);
