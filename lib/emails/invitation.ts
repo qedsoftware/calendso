@@ -34,7 +34,7 @@ const sendEmail = (invitation: Invitation, provider: EmailProvider): Promise<voi
     const invitationHtml = html(invitation);
     nodemailer.createTransport(transport).sendMail(
       {
-        from: `Cal.com <${from}>`,
+        from: `Scheduling @ QED.ai <${from}>`,
         to: invitation.toEmail,
         subject: invitation.from
           ? t("user_invited_you", { user: invitation.from, teamName: invitation.teamName })

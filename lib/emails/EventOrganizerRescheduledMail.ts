@@ -56,7 +56,7 @@ export default class EventOrganizerRescheduledMail extends EventOrganizerMail {
         filename: "event.ics",
         content: this.getiCalEventAsString(),
       },
-      from: `Cal.com <${this.getMailerOptions().from}>`,
+      from: `Scheduling @ QED.ai <${this.getMailerOptions().from}>`,
       to: this.calEvent.organizer.email,
       subject: this.calEvent.language("rescheduled_event_type_with_attendee", {
         attendeeName: this.calEvent.attendees[0].name,
