@@ -35,10 +35,6 @@ export default NextAuth({
 
         const username = userEmail.split("@")[0];
 
-        console.log("LELE");
-        console.log(username);
-        console.log(userEmail);
-
         const hashedPassword = await hashPassword("does-not-matter-anyway");
 
         await prisma.user.upsert({
