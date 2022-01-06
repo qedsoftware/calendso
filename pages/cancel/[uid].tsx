@@ -49,8 +49,8 @@ export default function Type(props) {
 
     if (res.status >= 200 && res.status < 300) {
       await router.push(
-        `/cancel/success?name=${props.profile.name}&title=${props.booking.title}&eventPage=${
-          props.profile.slug
+        `/cancel/success?name=${props.profile.name}&title=${props.booking.title}&username=${
+          props.profile.username
         }&team=${props.booking.eventType.team ? 1 : 0}`
       );
     } else {
@@ -192,7 +192,7 @@ export async function getServerSideProps(context) {
   const profile = booking.eventType.team
     ? {
         name: booking.eventType.team.name,
-        slug: booking.eventType.team.slug,
+        username: booking.eventType.team.slug,
       }
     : booking.user;
 

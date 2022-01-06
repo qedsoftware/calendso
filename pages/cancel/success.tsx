@@ -12,8 +12,11 @@ export default function CancelSuccess() {
   const { t } = useLocale();
   // Get router variables
   const router = useRouter();
-  const { title, name, eventPage } = router.query;
+  const { title, name, username, team } = router.query;
   const [session, loading] = useSession();
+
+  const eventPage = team ? `/team/${username}` : `/{username}`;
+
   return (
     <div>
       <HeadSeo
@@ -49,7 +52,7 @@ export default function CancelSuccess() {
                 </div>
                 <div className="mt-5 sm:mt-6 text-center">
                   <div className="mt-5">
-                    {!loading && !session && <Button href={eventPage}>Pick another</Button>}
+                    {!loading && !session && <Button href={`${eventPage}`}>Pick another</Button>}
                     {!loading && session && (
                       <Button data-testid="back-to-bookings" href="/bookings" EndIcon={ArrowRightIcon}>
                         {t("back_to_bookings")}
