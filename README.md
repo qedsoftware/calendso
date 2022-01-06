@@ -315,5 +315,5 @@ Special thanks to these amazing projects which help power Cal.com:
 - [Tailwind CSS](https://tailwindcss.com/)
 - [Prisma](https://prisma.io/)
 
-. <- flux (at least v1) does not detect changes to images if layers are not touched,
+.. <- flux (at least v1) does not detect changes to images if layers are not touched,
 so add a dot here if you're only changing things like CMD
