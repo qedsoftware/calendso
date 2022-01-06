@@ -14,7 +14,6 @@ export default function CancelSuccess() {
   const router = useRouter();
   const { title, name, eventPage } = router.query;
   const [session, loading] = useSession();
-  if (!loading) console.log(session);
   return (
     <div>
       <HeadSeo
